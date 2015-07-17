@@ -219,23 +219,27 @@ def plot_posterior( sample_vec,
         ax.set_xlabel(label, size = 15, verticalalignment = 'center')
 
 
-def plot_data_and_prediction( data,
-                              means,
-                              stds,
-                              numos,
+def plot_data_and_prediction( data, 
+                              means, 
+                              stds, 
+                              numos, 
                               ax, 
                               bins = None,
                               n_curves = 50, 
                               group = 'x', 
                               name = '', 
-                              colour = True,
+                              colour = 'red',
                               plot_y = False
                             ):
 
-    if colour:   
-        # for colour plots use:
+    if colour == 'red':   
+        # for colour plots with data in red use:
         light_blue  = '#89d1ea'
         red         = '#FF0000'
+    elif colour == 'blue':
+        # for colour plots with data in blue use:
+        light_blue  = '#FF0000'
+        red         = '#89d1ea'      
     else:
         # for greyscale plots use:
         light_blue  = '#909090'
