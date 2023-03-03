@@ -5,14 +5,18 @@ This module produces subplots similar to those in
 Kruschke, J. (2012) Bayesian estimation supersedes the t-test
     Journal of Experimental Psychology: General.
 """
-from __future__ import division
 import numpy as np
 from scipy.stats import gaussian_kde
 
 from matplotlib.transforms import blended_transform_factory
 import matplotlib.lines as mpllines
 import matplotlib.ticker as mticker
-from pymc.distributions import noncentral_t_like
+from scipy.special import gamma
+
+def noncentral_t(x, m, s, nu):
+    value = gamma((nu + 1)/2) / (np.sqrt(nu*np.pi) * gamma(nu/2) * s)
+    value *= (1 + ((x - m) / (s))**2 / nu)**(-(nu + 1)/2) 
+    return value   
 
 def hdi(sample_vec, cred_mass = 0.95):
     assert len(sample_vec), 'need points to find HDI'
@@ -82,9 +86,9 @@ def plot_posterior( sample_vec,
     stats = calculate_sample_statistics(sample_vec)
 
     if printstats:
-        print title  
-        print stats
-        print ''
+        print(title)  
+        print(stats)
+        print('')
     
     hdi_min = stats['hdi_min']
     hdi_max = stats['hdi_max']
@@ -247,7 +251,7 @@ def plot_data_and_prediction( data,
 
     # plot histogram of data
     ax.hist(data, bins = bins, rwidth = 0.7,
-            facecolor = red, edgecolor = 'none', normed = True)
+            facecolor = red, edgecolor = 'none', density = True)
 
     if bins is not None:
         if hasattr(bins,'__len__'):
@@ -268,11 +272,10 @@ def plot_data_and_prediction( data,
     for i in idxs:
         m = means[i]
         s = stds[i]
-        lam = 1/s**2
         numo = numos[i]
         nu = numo+1
 
-        v = np.exp([noncentral_t_like(xi, m, lam, nu) for xi in x])
+        v = [noncentral_t(xi, m, s, nu) for xi in x]
         ax.plot(x, v, color = light_blue, zorder = -10)
 
     ax.text(0.99,0.95,'$\mathrm{N}_{%s}= %d$' % (group, len(data),),
@@ -305,7 +308,7 @@ def plot_data( data,
 
     # plot histogram of data
     ax.hist(data, bins = bins, rwidth = 0.7,
-            facecolor = light_blue, edgecolor = 'none', normed = False)
+            facecolor = light_blue, edgecolor = 'none', density = False)
 
     ax.text(0.99,0.95,'$\mathrm{N}_{%s}= %d$' % (group, len(data),),
             transform = ax.transAxes,
