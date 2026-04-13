@@ -233,6 +233,8 @@ def plot_data_and_prediction( data,
                               group = 'x', 
                               name = '', 
                               colour = 'red',
+                              pcolour = 'random',
+                              line_width = 1.0,
                               plot_y = False
                             ):
 
@@ -275,11 +277,14 @@ def plot_data_and_prediction( data,
         numo = numos[i]
         nu = numo+1
 
-        # Generate a random color for each curve
-        random_color = np.random.rand(3,)  # RGB values between 0 and 1
+        if pcolour != 'random':
+            pc = light_blue
+        else:
+            # Generate a random color for each curve
+            pc = np.random.rand(3,)  # RGB values between 0 and 1
         
         v = [noncentral_t(xi, m, s, nu) for xi in x]
-        ax.plot(x, v, color = random_color, zorder = -10)
+        ax.plot(x, v, lw = line_width, color = pc, zorder = -10)
 
     ax.text(0.99,0.95,'$\mathrm{N}_{%s}= %d$' % (group, len(data),),
             transform = ax.transAxes,
