@@ -264,7 +264,7 @@ def plot_data_and_prediction( data,
     n_samps = len(means)
     idxs = map(int, np.round(np.random.uniform(size = n_curves)*n_samps))
 
-    x = np.linspace(xmin, xmax, 100)
+    x = np.linspace(xmin, xmax, 1000)
     if plot_y:
         ax.set_xlabel('y', verticalalignment = 'center')
     ax.set_ylabel('p(y)')
@@ -275,8 +275,11 @@ def plot_data_and_prediction( data,
         numo = numos[i]
         nu = numo+1
 
+        # Generate a random color for each curve
+        random_color = np.random.rand(3,)  # RGB values between 0 and 1
+        
         v = [noncentral_t(xi, m, s, nu) for xi in x]
-        ax.plot(x, v, color = light_blue, zorder = -10)
+        ax.plot(x, v, color = random_color, zorder = -10)
 
     ax.text(0.99,0.95,'$\mathrm{N}_{%s}= %d$' % (group, len(data),),
             transform = ax.transAxes,
